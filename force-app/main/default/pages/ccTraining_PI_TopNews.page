@@ -13,7 +13,7 @@
 
   <!-- HANDLEBARS TEMPLATE -->
   <script type="text/template" id="TopNews_HBTemplate">
-    {{#each this.children}}                                                   
+    {{#each this.children}}
       <li>
         <a href="{{data.url}}" target="_blank">{{data.title}}</a>
       </li>
