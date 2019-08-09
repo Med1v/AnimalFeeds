@@ -1,0 +1,131 @@
+<apex:page docType="html-5.0" sidebar="false" showHeader="false" standardStylesheets="false" applyHtmlTag="false" controller="ccTrainingMyAccountCtrl">
+
+    <script>
+        CCRZ.uiProperties.contactInfoView.desktop.tmpl = 'CCTrainingMyAccount-ContactInformation-Desktop'; 
+    </script>
+        
+   <script id="CCTrainingMyAccount-ContactInformation-Desktop" type="text/template">
+      <div class="panel panel-default cc_panel cc_myaccount_profile">
+        <div class="panel-body cc_body cc_myaccount_content">
+          <h3 class="cc_title">{{pageLabelMap 'MyAccount_Profile'}}</h3>
+          {{#ifEquals this.commerceType "B2B"}}
+            <div class="panel panel-default cc_panel cc_myaccount_information">
+              <div class="panel-heading cc_heading">
+                <h3 class="panel-title cc_title">{{pageLabelMap 'MyAccount_Profile_Account_Information'}}</h3>
+              </div>
+              <div class="panel-body cc_body cc_myaccount_general">
+                <p class="myAccProfileNote cc_profile_note">
+                  {{pageLabelMap 'MyAccount_Profile_Note'}}
+                </p>
+                {{#ifDisplay 'reg.addlInf'}}
+                  <p class="myAccProfileCompany cc_profile_company">
+                    <span class="cc_profile_company_label">{{pageLabelMap 'MyAccount_Profile_Company'}}&#58;</span>
+                    <span class="cc_profile_company_valuel">{{accountBean.name}}</span>
+                  </p>
+                {{/ifDisplay}}
+                <!-- Exercise TODO - Add your code to this section -->
+                <p class="myAccProfileCompany cc_profile_company">
+                    <span class="cc_profile_company_label">{{pageLabelMap 'CCTrainingMyAccount_Remaining_Credit'}}&#58;</span>
+                    <span class="cc_profile_company_valuel">{{price '{!remainingCredit}' '{!userCurrency}'}}</span> 
+                </p>
+                <p class="myAccAccountGroup cc_profile_account_group">
+                  <span class="cc_profile_account_group_label">{{pageLabelMap 'MyAccount_Profile_Account_Group'}}&#58;</span>
+                  <span class="cc_profile_account_group_value">{{accountBean.accountGroupName}}</span>
+                </p>
+                <p class="myAccProfilePhone cc_profile_phone">
+                  <span class="cc_profile_phone_label">{{pageLabelMap 'MyAccount_Profile_Phone'}}&#58;</span>
+                  <span class="cc_profile_phone_value">{{accountBean.phone}}</span>
+                </p>
+                <div class="row">
+                  <div class="col-md-6 myAccBillingAddr cc_billing_address">
+                    <span class="cc_profile_billing_label">{{pageLabelMap 'MyAccount_Profile_Account_Billing_Address'}}</span>
+                    <span class="cc_profile_billing_value">{{> addressDisplay this.accountBean.billingAddress}}</span>
+                  </div>
+                  <div class="col-md-6 myAccShippingAddr cc_shipping_address">
+                    <span class="cc_profile_shipping_label">{{pageLabelMap 'MyAccount_Profile_Account_Shipping_Address'}}</span>
+                    <span class="cc_profile_shipping_value">{{> addressDisplay this.accountBean.shippingAddress}}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="panel panel-default cc_panel cc_myaccount_contact_information">
+              <div class="panel-heading cc_heading">
+                <h3 class="panel-title cc_title">{{pageLabelMap 'MyAccount_Profile_Contact_Information'}}</h3>
+              </div>
+              <div class="panel-body cc_body cc_myaccount_contact">
+                <p class="myAccProfileName cc_profile_name">
+                  <span class="cc_profile_name_label">{{pageLabelMap 'MyAccount_Profile_Name'}}&#58;</span>
+                  {{#if contactBean.firstName}}
+                    <span class="cc_profile_name_value">{{contactBean.firstName}} {{contactBean.lastName}}</span>
+                  {{else}}
+                    <span class="cc_profile_name_label">No name stored.</span>
+                  {{/if}}
+                </p>
+                <p class="myAccProfilePhone cc_profile_phone">
+                  <span class="cc_profile_phone_label">{{pageLabelMap 'MyAccount_Profile_Phone'}}&#58;</span>
+                  {{#if contactBean.phone}}
+                    <span class="cc_profile_phone_value">{{contactBean.phone}}</span>
+                  {{else}}
+                    <span class="cc_profile_phone_value">No phone number stored.</span>
+                  {{/if}}
+                </p>
+                <div class="row">
+                  <div class="col-md-6 myAccMailingAddr cc_mailing_address">
+                    <span class="cc_profile_mailing_label">{{pageLabelMap 'MyAccount_Profile_Contact_Mailing_Address'}}</span>
+                    <span class="cc_profile_mailing_value">{{> addressDisplay this.contactBean.mailingAddress}}</span>
+                  </div>
+                  <div class="col-md-6  myAccOtherAddr cc_other_address">
+                    <span class="cc_profile_other_label">{{pageLabelMap 'MyAccount_Profile_Contact_Other_Address'}}</span>
+                    <span class="cc_profile_other_valuel">{{> addressDisplay this.contactBean.otherAddress}}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {{/ifEquals}}
+          <div class="panel panel-default cc_panel cc_myaccount_user_information">
+            <div class="panel-heading cc_heading">
+              <h3 class="panel-title cc_title">{{pageLabelMap 'MyAccount_Profile_User_Information'}}</h3>
+            </div>
+            <div class="panel-body cc_body cc_myaccount_user">
+              <p class="myAccName cc_name">
+                <span class="cc_profile_name_label">{{pageLabelMap 'MyAccount_Profile_Name'}}&#58;</span>
+                <span class="cc_profile_name_value">{{userFirstName}} {{userLastName}}</span>
+              </p>
+              <p class="myAccPhone cc_acct_phone">
+                <span class="cc_acct_phone_label">{{pageLabelMap 'MyAccount_Profile_Phone'}}&#58;</span>
+                <span class="cc_acct_phone_value">{{userPhone}}</span>
+              </p>
+              <p class="myAccUserName cc_acct_username">
+                <span class="cc_acct_username_label">{{pageLabelMap 'MyAccount_Profile_Username'}}&#58;</span>
+                <span class="cc_acct_username_value">{{username}}</span>
+              </p>
+              <p class="myAccEmailAddr cc_acct_email">
+                <span class="cc_acct_email_label">{{pageLabelMap 'MyAccount_Profile_Email'}}&#58;</span>
+                <span class="cc_acct_email_value">{{emailAddress}}</span>
+              </p>
+              <p class="myAccLanguage cc_acct_language">
+                <span class="cc_acct_language_label">{{pageLabelMap 'MyAccount_Profile_Language'}}&#58;</span>
+                <span class="cc_acct_language_value">{{language}}</span>
+              </p>
+              <p class="myAccCurrency cc_acct_currency">
+                <span class="cc_acct_currency_label">{{pageLabelMap 'MyAccount_Profile_Currency'}}&#58;</span>
+                <span class="cc_acct_currency_value">{{currencyName}}</span>
+              </p>
+              {{#ifDisplay 'reg.tmZn'}}
+                <p class="myAccTimeZone cc_acct_timezone">
+                  <span class="cc_acct_timezone_label">{{pageLabelMap 'MyAccount_Profile_TimeZone'}}&#58;</span>
+                  <span class="cc_acct_timezone_value">{{timeZone}}</span>
+                </p>
+              {{/ifDisplay}}
+            </div>
+          </div>
+          {{#if hideEditProfile}}
+          {{else}}
+            <input type="button" class="btn btn-default btn-sm gotoSectionContactInfoEdit cc_edit_profile" value="{{pageLabelMap 'MyAccount_EditProfile'}}" />
+          {{/if}}
+        </div>
+    </div>
+ </script>
+
+
+</apex:page>

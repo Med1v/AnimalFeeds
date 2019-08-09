@@ -1,0 +1,15 @@
+<apex:page id="ccTraining_SP_ContactUs" docType="html-5.0"
+  sidebar="false" showHeader="false"
+  standardStylesheets="false" applyHtmlTag="false">   
+    <div class="row">  
+        <div class="col-md-offset-3 col-md-9">
+            <h3>Contact Us</h3>
+            <div>
+                101 N Upper Wacker<br/>
+                Chicago, IL 60606 USA<br/>
+                (866) 217-3210
+            </div>
+            <p/>
+        </div>
+    </div>
+</apex:page>

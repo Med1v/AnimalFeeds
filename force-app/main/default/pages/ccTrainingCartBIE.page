@@ -1,0 +1,168 @@
+<apex:page docType="html-5.0" sidebar="false" showHeader="false" standardStylesheets="false" applyHtmlTag="false" controller="ccTrainingCartCtrl">  
+   {!blank}
+  <script type="text/javascript">
+        CCRZ.uiProperties.CartDetailView.partials.actionsTotals = '#CCTrainingCartDetail-ActionTotals-View'; 
+ </script>
+
+<script id="CCTrainingCartDetail-ActionTotals-View" type="text/template"> 
+   <div class="row">
+      <div class="col-md-5">
+         {{#ifStoreSetting 'Display_Cart_Coupon__c'}}
+            <div class="panel panel-default cc_panel cc_shopping_cart_discount_panel">
+               <div class="panel-heading cc_heading">
+                  <h3 class="panel-title cc_title">{{pageLabelMap 'CartInc_discountCodes'}}</h3>
+               </div>
+               <div class="cc_myaccount_content panel-body cc_body">
+                  {{#if this.hasCoupon}}
+                     <form id="couponClearForm" class="cc_coupon_clear_form">
+                        <div class="discount_code cc_discount_code">
+                           <p class="cc_applied_coupon">{{pageLabelMap 'CartInc_AppliedCoupon'}} {{this.couponName}}</p>
+                           <p class="cc_clear_coupon_code"><button id="clearCouponBtn" type="button" class="btn btn-default btn-sm cc_clear_coupon">{{pageLabelMap 'CartInc_ClearCoupon'}}</button></p>
+                        </div>
+                     </form>
+                  {{else}}
+                     <form id="couponAddForm" class="cc_coupon_add_form">
+                        <div class="discount_code cc_discount_code">
+                           <p id="couponAddError" class="cc_coupon_add_error"></p>
+                           <p class="cc_enter_coupon_code">{{pageLabelMap 'CartInc_EntercouponCode'}}</p>
+                           <div class="form-group">
+                              <label for="addCouponId" class="sr-only">Add Coupon</label>
+                              <input type="text" id="addCouponId" name="couponId" class="form-control cc_add_coupon_id" />
+                              <div class="couponMessagingSection-Error"></div>
+                           </div>
+                           <button id="addCouponBtn" type="button" class="btn btn-default btn-sm cc_add_coupon">{{pageLabelMap 'CartInc_ApplyCoupon'}}</button>
+                        </div>
+                     </form>
+                  {{/if}}
+               </div>
+            </div>
+         {{/ifStoreSetting}}
+      </div>
+      <div class="col-md-7">
+         <div class="row">
+            <div class="col-md-12">
+               <div class=" cc_action_totals pull-right">
+                  <button class="btn btn-default btn-sm continueShoppingButton cc_continue_shopping_button" name="" type="button" >{{pageLabelMap 'CartInc_ContinueShopping'}}</button>
+                  {{#if {!ISPICKVAL($User.UserType, 'Guest')} }}
+                  {{ else }}
+                     {{#ifStoreSetting 'AutoCalcPriceAdjust__c'}}
+                     {{else}}
+                        <button class="btn btn-default btn-sm getExtPricingButton cc_get_ext_pricing_button" type="button" >{{pageLabelMap 'CartInc_ApplyDiscounts'}}</button>
+                     {{/ifStoreSetting}}
+                     {{#ifDisplay 'WL.PkrOn'}}
+                     <button class="btn btn-default btn-sm cc_create_cart_wishlist" data-toggle="modal" data-target="#wishMod" name="" type="button" >{{pageLabelMap 'Create_Cart_Wishlist'}}</button>
+                     {{/ifDisplay}}
+                  {{/if}}
+                  <button class="btn btn-default btn-sm updateCartButton cc_update_cart_button" name="" type="button" >{{pageLabelMap 'CartInc_Update'}}</button>
+                  {{#if {!ISPICKVAL($User.UserType, 'Guest')} }}
+                     {{#ifDisplay 'C.EmailAnon'}}
+                        <a href="#emailModal" id="emailCartLink" class="cc_email_cart_link" data-toggle="modal"><button class="btn btn-default btn-sm remove cc_email_cart_link_button" type="button" >{{pageLabelMap 'CartOrderEmailer_Header'}}</button></a>
+                     {{/ifDisplay}}
+                  {{else}}
+                     {{#ifDisplay 'C.EnableEmailCart'}}
+                        <a href="#emailModal" id="emailCartLink" class="cc_email_cart_link" data-toggle="modal"><button class="btn btn-default btn-sm remove cc_email_cart_link_button" type="button" >{{pageLabelMap 'CartOrderEmailer_Header'}}</button></a>
+                     {{/ifDisplay}}
+                  {{/if}}
+                  <!-- rfq button -->
+                  {{#if {!ISPICKVAL($User.UserType, 'Guest')} }}
+                     {{#ifDisplay 'rfq.GuestUser'}}
+                        <a href="#rfqModal" id="rfqLink" class="cc_rfq_link" data-toggle="modal"><button class="btn btn-default btn-sm remove cc_rfq_link_button" type="button" >{{pageLabelMap 'CartRFQForm_Header'}}</button></a>
+                     {{/ifDisplay}}
+                  {{else}}
+                     {{#ifDisplay 'rfq.LoggedIn'}}
+                        <a href="#rfqModal" id="rfqLink" class="cc_rfq_link" data-toggle="modal"><button class="btn btn-default btn-sm remove cc_rfq_link_button" type="button" >{{pageLabelMap 'CartRFQForm_Header'}}</button></a>
+                     {{/ifDisplay}}
+                  {{/if}}
+                  <!-- rfq button -->
+                  {{#ifNotEquals this.allowCheckout true}} 
+                   <!-- Exercise TODO  - Add the HTML code for the credit override button here -->
+					<button class="btn btn-default btn-sm remove cc_rfq_link_button createCreditCase" type="button">{{pageLabelMap 'CCTrainingCart_CreditOverrideBtn'}}</button>
+                    {{/ifNotEquals}}
+               </div>
+            </div>
+         </div>
+         <div class="row">
+            <div class="col-md-12">
+               <ul class="checkout list-unstyled cc_checkout pull-right">
+                  {{#if subTotal}}
+                     <li class="grand_total cc_grand_total">
+                        <p class="price cc_price">
+                           <span class="cc_label">{{pageLabelMap 'CartInc_Subtotal'}}:</span>
+                           <span class="cc_value">{{{price subTotal}}}</span>
+                        </p>
+                     </li>
+                  {{/if}}
+                  {{#if this.totalInfo}}
+                     <li class="cart_total_amount cc_cart_total_amount">{{this.totalInfo}}</li>
+                  {{/if}}
+                  <li class="totalsmessagingSection cc_total_messaging_section"></li>
+                  {{#if this.cartItems}}
+                     {{#ifNotEquals this.cartItems.length 0}}
+                        {{#if this.allowCheckout}}
+                           {{#ifEquals this.preventCheckout false}}
+                              <li>
+                                 <button type="button" class="btn btn-default btn-sm checkOutBtn cc_checkout_btn pull-right">{{pageLabelMap 'CartInc_Checkout'}}</button>
+                              </li>
+                           {{/ifEquals}}
+                        {{/if}}
+                     {{/ifNotEquals}}
+                  {{/if}}
+               </ul>
+            </div>
+         </div>
+      </div>
+   </div>
+</script>
+
+<script type="text/javascript">
+  jQuery(function($)
+    {
+        CCRZ.subsc = _.extend(CCRZ.subsc||{}); 
+
+        
+          CCRZ.subsc.cartRemoteActions = _.extend({
+            className : 'ccTrainingCartCtrl',
+            createCreditCaseAction : function(callback)
+            {
+                this.invokeCtx('createCreditCase',
+                    function(resp)
+                    {
+                        callback(resp);
+                    },
+                    {
+                        buffer : false, // this call will be executed by itself
+                        nmsp   : false  // defines that this is a call to a subscriber class
+                    }); // end invokeCtx call
+             }
+           },CCRZ.RemoteInvocation);
+           
+
+        CCRZ.pubSub.on('view:CartDetailView:refresh', function(cartDetailView) 
+        {
+          cartDetailView.createCreditCaseAction = function(event)  
+           {
+               CCRZ.subsc.cartRemoteActions.createCreditCaseAction(function(resp)
+                {
+                  if(resp && resp.success)
+                  {
+                      
+                     CCRZ.pubSub.trigger('pageMessage',{
+                                    messages:[
+                                        {
+                                            type : 'CUSTOM',
+                                            severity : 'INFO',
+                                            classToAppend : 'messagingSection-Info',
+                                            labelId : 'CCTraining_CreditOverrideRequested'
+                                        }
+                                    ]
+                      });
+                   }
+                });
+            };
+
+           cartDetailView.events['click .createCreditCase'] = 'createCreditCaseAction'; 
+           cartDetailView.delegateEvents(); 
+        });
+    });
+</script>
+</apex:page>

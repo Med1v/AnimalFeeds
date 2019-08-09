@@ -1,0 +1,57 @@
+<apex:page id="ccTraining_PI_TopNews" docType="html-5.0"
+  sidebar="false" showHeader="false"
+  standardStylesheets="false" applyHtmlTag="false">
+
+  <!-- HTML CONTAINER -->
+  <h3>Meanwhile in the News...</h3>
+  <ol class="anchorClass"></ol>                                               
+  <p>
+    <small>News Content provided by
+      <a href="https://www.reddit.com" target="_blank">Reddit</a>
+    </small>
+  </p>
+
+  <!-- HANDLEBARS TEMPLATE -->
+  <script type="text/template" id="TopNews_HBTemplate">
+    {{#each this.children}}                                                   
+      <li>
+        <a href="{{data.url}}" target="_blank">{{data.title}}</a>
+      </li>
+    {{/each}}
+  </script>
+
+  <!-- JS CODE -->
+  <script type="text/javascript">
+    jQuery(function($) {
+        CCRZ.subsc        = CCRZ.subsc || {};
+        CCRZ.subsc.views  = CCRZ.subsc.views || {};
+        CCRZ.subsc.views.TopNews_BBView = CCRZ.CloudCrazeView.extend({       
+          templateName: CCRZ.util.template('TopNews_HBTemplate'),            
+          renderSelector: ".anchorClass",                                    
+          viewName: "TopNews_BBView",
+          managedSubView: true,
+          renderDesktop: function(){                                         
+            this.renderView(this.templateName, this.renderSelector);
+          },
+          renderPhone : function() {
+            this.renderView(this.templateName, this.renderSelector);
+          },
+          renderView: function(templateName,renderSelector) {
+            var v = this;
+            v.setElement(renderSelector);                                    
+            webServiceURL="https://www.reddit.com/r/news/top/.json?limit=5"; 
+            $.ajax({
+              url:webServiceURL,
+              success:function(data){
+                var modelData = data;
+                v.$el.html(templateName(modelData.data));                    
+              }
+            });
+          }
+        });
+        TopNews = new CCRZ.subsc.views.TopNews_BBView({});                   
+        TopNews.render();
+      });
+    </script>
+
+</apex:page>

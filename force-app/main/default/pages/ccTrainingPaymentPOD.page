@@ -1,0 +1,110 @@
+<apex:page applyHtmlTag="false" docType="html-5.0" sidebar="false" showHeader="false" standardStylesheets="false" cache="false">
+
+    <script id="PaymentPOD-Both" type="text/template"> 
+        <div class="ccPaymentOuterContainer">
+            <div class="main_content_large_right_container">
+                <div class="alert alert-error ccPayment-messagingSection-Error" style="display: none"></div>
+                <form id="newPODForm" action="" class="newPODForm">
+                    <fieldset>
+                        <legend>Purchase on Delivery</legend>
+                        <p>Enter your payment data below</p>
+                        <p>Purchase On Delivery Number:</p><p><input id="accountNumber" type="text" name="accountNumber"/></p> 
+                    </fieldset>
+                    <p class="two_buttons">
+                    <div class="right">
+                        <input type="button" class="button makePODPayment" id="btnmakePODPayment" data-id="newPODForm" value="Process Payment" /> 
+                        <input type="hidden" name="accountType" value="pod"/> 
+                    </div>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </script>
+
+
+    <script>
+        
+        jQuery(function($)
+        {
+            CCRZ.models.PaymentsPODModel = CCRZ.CloudCrazeModel.extend(); 
+
+            CCRZ.views.PaymentsPODView = CCRZ.CloudCrazeView.extend({ 
+                viewName : "PaymentsPODView",
+                managedSubView : true,
+                templateDesktop : CCRZ.util.template("PaymentPOD-Both"), 
+                templatePhone : CCRZ.util.template("PaymentPOD-Both"), 
+                init : function(options)
+                {
+                    this.selector = options.selector;
+                    this.render();
+                    CCRZ.pubSub.trigger('action:paymentViewInit',this);
+                },
+                events:
+                    {
+                        "click .makePODPayment" : "makePODPayment" 
+                    },
+                validateInfo: function(formName, fieldData)
+                {
+                    $("#"+formName).validate({
+                        invalidHandler: function(event, validator)
+                        {
+                            CCRZ.handleValidationErrors(event, validator, 'ccPayment-messagingSection-Error', false);
+                        },
+                        rules:
+                            {
+                                accountNumber : { required: true, minlength: 4 }
+                            },
+                        messages:
+                            {
+                                accountNumber : { required : 'POD number is required', minlength: 'POD must be 4 characters in length' }
+                            },
+                        errorPlacement: function(error, element) {
+                        }
+                    });
+                    return $("#"+formName).valid();
+                },
+
+                parentPreRender : function()
+                {
+                    //Look for the instantiated iframe
+                    //Detach it from the DOM
+                    //Re-render the view but don't create the iframe
+                    //Re-attach the iframe as appropriate in the rendered view
+                },
+                renderDesktop : function()
+                {
+                    this.setElement(this.selector);
+                    this.data={};
+                    this.$el.html(this.templateDesktop(this.data));
+                },
+                renderPhone : function()
+                {
+                    this.setElement(this.selector);
+                    this.data={};
+                    this.$el.html(this.templatePhone(this.data));
+                },
+                makePODPayment : function(event) 
+                {
+                    var formName = $(event.target).data("id");
+                    var formData = form2js(formName, '.', false, function(node) {}, false);
+                    if (this.validateInfo(formName, formData))
+                    {
+                        var paymentData = formData;
+                        paymentData.accountNumber = document.getElementById('accountNumber').value; 
+
+                        CCRZ.pubSub.trigger('action:processPayment', paymentData); 
+                    }
+                }
+            });
+            CCRZ.pubSub.trigger('action:paymentViewReady','pod',function(options)
+            {
+                CCRZ.payment = CCRZ.payment||{views:{}};
+
+                CCRZ.payment.views.pod = new CCRZ.views.PaymentsPODView({
+                    model : new CCRZ.models.PaymentsPODModel(), 
+                    selector : options.selector
+                });
+            });
+        });
+    </script>
+</apex:page>
