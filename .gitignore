@@ -1,0 +1,13 @@
+# ignore everything
+*
+
+# Except:
+!.gitignore
+!force-app/
+!force-app/main/
+!force-app/main/default/
+!force-app/main/default/classes/
+!force-app/main/default/classes/*
+!force-app/main/default/classes/*/*
+!force-app/main/default/pages/
+!force-app/main/default/pages/*
