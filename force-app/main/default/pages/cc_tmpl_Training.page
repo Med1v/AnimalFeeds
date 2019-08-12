@@ -1,6 +1,7 @@
 <apex:page id="cc_tmpl_Training" docType="html-5.0"
   sidebar="false" showHeader="false"
   standardStylesheets="false" applyHtmlTag="false">   
+
   <apex:define name="htmlbody">   
     <div class="container cc_main_container cc_tmpl_Training">   
       <div class="row cc_main_row">
@@ -8,7 +9,7 @@
         </div> -->
         <div class="col-md-9 cc_main_content_col">
           <div class="row cc_main_content_row">
-            <!-- <div id="categories-left-nav"></div> -->
+            <div id="categories-left-nav"></div>
             <!-- <apex:insert name="homeCats" /> -->
             <apex:insert name="WidgetBoxC" />
             <apex:insert name="Banner" />

@@ -1,67 +1,64 @@
 <apex:page docType="html-5.0"
   sidebar="false" showHeader="false"
-  standardStylesheets="false" applyHtmlTag="false">   
+  standardStylesheets="false" applyHtmlTag="false"
+  controller="ccCatPageController">
 
+
+  <!-- HTML CONTAINER -->
   <div class="mdc-layout-grid">
-    <div class="mdc-layout-grid__inner">
-      
-      <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4">
-        <div class="mdc-card cat-card">
-          <div class="mdc-card__primary-action cat-card__primary-action" tabindex="0">
-            <div class="mdc-card__media mdc-card__media--16-9 cat-card__media" style="background-image: url('https://material-components.github.io/material-components-web-catalog/static/media/photos/3x2/2.jpg');"></div>
-            <div class="cat-card__primary">
-              <h2 class="cat-card__title mdc-typography mdc-typography--headline6">Our Changing Planet</h2>
-              <h3 class="cat-card__subtitle mdc-typography mdc-typography--subtitle2">by Kurt Wagner</h3>
-            </div>
-            <div class="cat-card__secondary mdc-typography mdc-typography--body2">Visit ten places on our planet that are undergoing the biggest changes today.</div>
-          </div>
-          <div class="mdc-card__actions">
-            <div class="mdc-card__action-buttons">
-              <button class="mdc-button mdc-card__action mdc-card__action--button">Read</button>
-              <button class="mdc-button mdc-card__action mdc-card__action--button">Bookmark</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4">
-        <div class="mdc-card cat-card">
-          <div class="mdc-card__primary-action cat-card__primary-action" tabindex="0">
-            <div class="mdc-card__media mdc-card__media--16-9 cat-card__media" style="background-image: url('https://material-components.github.io/material-components-web-catalog/static/media/photos/3x2/2.jpg');"></div>
-            <div class="cat-card__primary">
-              <h2 class="cat-card__title mdc-typography mdc-typography--headline6">Our Changing Planet</h2>
-              <h3 class="cat-card__subtitle mdc-typography mdc-typography--subtitle2">by Kurt Wagner</h3>
-            </div>
-            <div class="cat-card__secondary mdc-typography mdc-typography--body2">Visit ten places on our planet that are undergoing the biggest changes today.</div>
-          </div>
-          <div class="mdc-card__actions">
-            <div class="mdc-card__action-buttons">
-              <button class="mdc-button mdc-card__action mdc-card__action--button">Read</button>
-              <button class="mdc-button mdc-card__action mdc-card__action--button">Bookmark</button>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div class="mdc-layout-grid__inner anchorClass">
+      <div id='invisibleData' data='{!cats}' />
 
-      <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4">
-        <div class="mdc-card cat-card">
-          <div class="mdc-card__primary-action cat-card__primary-action" tabindex="0">
-            <div class="mdc-card__media mdc-card__media--16-9 cat-card__media" style="background-image: url('https://material-components.github.io/material-components-web-catalog/static/media/photos/3x2/2.jpg');"></div>
-            <div class="cat-card__primary">
-              <h2 class="cat-card__title mdc-typography mdc-typography--headline6">Our Changing Planet</h2>
-              <h3 class="cat-card__subtitle mdc-typography mdc-typography--subtitle2">by Kurt Wagner</h3>
-            </div>
-            <div class="cat-card__secondary mdc-typography mdc-typography--body2">Visit ten places on our planet that are undergoing the biggest changes today.</div>
+    </div>
+  </div>
+  <!-- HANDLEBARS TEMPLATE -->
+  <script type="text/template" id="cat_cards_template">
+    {{#each this}}
+    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4">
+      <div class="mdc-card cat-card">
+        
+        <div class="mdc-card__primary-action cat-card__primary-action" tabindex="0">
+          <a class='card_link' href='https://www.google.com/search?q={{this}}'></a>
+          <div class="mdc-card__media mdc-card__media--16-9 cat-card__media" style="background-image: url('{{this.domain}}{{image 'Static Resource' 'images/product_image.jpg'}}');"></div>
+          <div class="cat-card__primary">
+            <h2 class="cat-card__title mdc-typography mdc-typography--headline6">{{this.name}}</h2>
           </div>
-          <div class="mdc-card__actions">
-            <div class="mdc-card__action-buttons">
-              <button class="mdc-button mdc-card__action mdc-card__action--button">Read</button>
-              <button class="mdc-button mdc-card__action mdc-card__action--button">Bookmark</button>
-            </div>
-          </div>
+        
         </div>
       </div>
     </div>
-  </div>
+    {{/each}}
+  </script>
+  <!-- JS CODE -->
+  <script type="text/javascript">
+    jQuery(function($) {
+        CCRZ.subsc        = CCRZ.subsc || {};
+        CCRZ.subsc.views  = CCRZ.subsc.views || {};
+        CCRZ.subsc.views.CatCardsView = CCRZ.CloudCrazeView.extend({       
+          templateName: CCRZ.util.template('cat_cards_template'),            
+          renderSelector: ".anchorClass",                                    
+          viewName: "CatCardsView",
+          managedSubView: true,
+          renderDesktop: function(){                                         
+            this.renderView(this.templateName, this.renderSelector);
+          },
+          renderPhone : function() {
+            this.renderView(this.templateName, this.renderSelector);
+          },
+          renderView: function(templateName,renderSelector) {
+            var v = this;
+            v.setElement(renderSelector);
+
+            // data = ['Title 1', 'Title 2', 'Title 3', 'Four', 'Fith', 'dsdsadsa'];
+            data = JSON.parse(document.getElementById("invisibleData").data);
+            data.domain = 'https://cloudcrazetraining-1665f2b59-16c17fa486c.force.com';
+
+            v.$el.html(templateName(data));                    
+          }
+        });
+        CatCards = new CCRZ.subsc.views.CatCardsView({});                   
+        CatCards.render();
+      });
+    </script>
 
 </apex:page>
